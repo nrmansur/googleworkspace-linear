@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
 import {
   getAllSettings,
-  getSetting,
   setSetting,
   deleteSetting,
 } from "../services/settingsService";
@@ -14,13 +13,13 @@ settingsRoutes.get("/", async (_req: Request, res: Response) => {
   try {
     const settings = await getAllSettings();
     res.json(settings);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch {
+    res.json({});
   }
 });
 
 // Update a setting
-settingsRoutes.put("/:key", async (req: Request, res: Response) => {
+settingsRoutes.put("/:key", async (req: Request<{ key: string }>, res: Response) => {
   try {
     const { key } = req.params;
     const { value } = req.body;
@@ -38,7 +37,7 @@ settingsRoutes.put("/:key", async (req: Request, res: Response) => {
 });
 
 // Delete a setting
-settingsRoutes.delete("/:key", async (req: Request, res: Response) => {
+settingsRoutes.delete("/:key", async (req: Request<{ key: string }>, res: Response) => {
   try {
     const deleted = await deleteSetting(req.params.key);
     res.json({ success: deleted });
@@ -60,7 +59,7 @@ settingsRoutes.get("/linear/teams", async (_req: Request, res: Response) => {
 // Fetch labels for a team
 settingsRoutes.get(
   "/linear/teams/:teamId/labels",
-  async (req: Request, res: Response) => {
+  async (req: Request<{ teamId: string }>, res: Response) => {
     try {
       const labels = await getLabels(req.params.teamId);
       res.json(labels);

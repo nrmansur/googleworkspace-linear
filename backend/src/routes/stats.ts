@@ -35,8 +35,14 @@ statsRoutes.get("/", async (_req: Request, res: Response) => {
       successRate,
       recentLogs,
     });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch {
+    res.json({
+      ticketsCreated: 0,
+      ticketsFailed: 0,
+      webhooksReceived: 0,
+      successRate: "N/A",
+      recentLogs: [],
+    });
   }
 });
 
@@ -65,7 +71,10 @@ statsRoutes.get("/logs", async (req: Request, res: Response) => {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch {
+    res.json({
+      logs: [],
+      pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+    });
   }
 });

@@ -30,17 +30,21 @@ app.get("/api/health", (_req, res) => {
 const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/gworkspace-linear";
 
+// Disable Mongoose buffering so queries fail fast when MongoDB is unavailable
+mongoose.set("bufferCommands", false);
+
+// Start server immediately, connect to MongoDB in the background
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
 mongoose
-  .connect(MONGODB_URI)
+  .connect(MONGODB_URI, { serverSelectionTimeoutMS: 5000 })
   .then(() => {
     console.log("Connected to MongoDB");
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
   })
   .catch((err) => {
-    console.error("MongoDB connection error:", err);
-    process.exit(1);
+    console.warn("MongoDB not available — running without database:", err.message);
   });
 
 export default app;
